@@ -1,0 +1,58 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+CLAUDE.md
+
+# SEGGER Embedded Studio
+firmware/**/*.jlink
+firmware/**/Output/
+firmware/**/obj/
+firmware/**/*.map
+firmware/**/*.elf
+firmware/**/*.bin
+
+# nRF build artifacts
+_build/
+
+# Xcode / iOS
+ios-app/**/build/
+ios-app/**/*.xcworkspace/xcuserdata/
+ios-app/**/*.xcodeproj/xcuserdata/
+ios-app/**/*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+ios-app/**/DerivedData/
+ios-app/**/*.ipa
+ios-app/**/*.dSYM.zip
+ios-app/**/*.dSYM
+ios-app/**/Pods/
+ios-app/**/*.xcworkspace
+!ios-app/**/*.xcworkspace/contents.xcworkspacedata
+
+# Swift Package Manager
+.build/
+Package.resolved
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Secrets / credentials
+.env
+*.pem
+*.key
