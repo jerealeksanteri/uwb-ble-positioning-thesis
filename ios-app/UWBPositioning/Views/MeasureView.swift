@@ -2,9 +2,15 @@ import SwiftUI
 
 struct MeasureView: View {
     @ObservedObject var viewModel: PositioningViewModel
+    @FocusState private var focusedField: String?
 
     @State private var showShareSheet = false
     @State private var shareURL: URL?
+
+    // @State text fields for manual numeric input (avoids format: .number binding issues)
+    @State private var trueDistanceText: String = "1"
+    @State private var trueXText: String = "0"
+    @State private var trueYText: String = "0"
 
     private var dataExport: DataExportService { viewModel.dataExportService }
     private var bluetoothManager: BluetoothManager { viewModel.bluetoothManager }
@@ -29,10 +35,22 @@ struct MeasureView: View {
                 if !dataExport.positionSamples.isEmpty && !dataExport.isRecording { positionExportSection }
             }
         }
+        .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { focusedField = nil }
+            }
+        }
         .sheet(isPresented: $showShareSheet) {
             if let url = shareURL {
                 ShareSheet(activityItems: [url])
             }
+        }
+        .onAppear {
+            trueDistanceText = formatFloat(dataExport.trueDistance)
+            trueXText = formatFloat(dataExport.trueX)
+            trueYText = formatFloat(dataExport.trueY)
         }
     }
 
@@ -66,10 +84,14 @@ struct MeasureView: View {
             HStack {
                 Text("True Distance")
                 Spacer()
-                TextField("meters", value: $viewModel.dataExportService.trueDistance, format: .number)
+                TextField("meters", text: $trueDistanceText)
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 80)
+                    .focused($focusedField, equals: "trueDistance")
+                    .onChange(of: focusedField) { _, newFocus in
+                        if newFocus != "trueDistance" { commitTrueDistance() }
+                    }
                 Text("m")
                     .foregroundStyle(.secondary)
             }
@@ -79,7 +101,9 @@ struct MeasureView: View {
                 HStack {
                     ForEach([0.5, 1.0, 2.0, 3.0, 5.0, 7.0, 10.0], id: \.self) { dist in
                         Button(String(format: "%.1f", dist)) {
-                            dataExport.trueDistance = Float(dist)
+                            let val = Float(dist)
+                            dataExport.trueDistance = val
+                            trueDistanceText = formatFloat(val)
                         }
                         .buttonStyle(.bordered)
                         .tint(dataExport.trueDistance == Float(dist) ? .blue : .gray)
@@ -120,6 +144,7 @@ struct MeasureView: View {
                     if dataExport.isRecording {
                         dataExport.stopRecording()
                     } else {
+                        commitTrueDistance()
                         guard let anchorId = dataExport.recordingAnchorId else { return }
                         dataExport.startRecording(
                             anchorId: anchorId,
@@ -177,15 +202,23 @@ struct MeasureView: View {
             HStack {
                 Text("X")
                     .frame(width: 20)
-                TextField("X", value: $viewModel.dataExportService.trueX, format: .number)
+                TextField("0", text: $trueXText)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(.roundedBorder)
+                    .focused($focusedField, equals: "trueX")
+                    .onChange(of: focusedField) { _, newFocus in
+                        if newFocus != "trueX" { commitTrueX() }
+                    }
 
                 Text("Y")
                     .frame(width: 20)
-                TextField("Y", value: $viewModel.dataExportService.trueY, format: .number)
+                TextField("0", text: $trueYText)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(.roundedBorder)
+                    .focused($focusedField, equals: "trueY")
+                    .onChange(of: focusedField) { _, newFocus in
+                        if newFocus != "trueY" { commitTrueY() }
+                    }
             }
             .disabled(dataExport.isRecording)
 
@@ -229,6 +262,8 @@ struct MeasureView: View {
                     if dataExport.isRecording {
                         dataExport.stopRecording()
                     } else {
+                        commitTrueX()
+                        commitTrueY()
                         dataExport.startPositionRecording(
                             trueX: dataExport.trueX,
                             trueY: dataExport.trueY,
@@ -311,6 +346,50 @@ struct MeasureView: View {
             .tint(.orange)
         }
     }
+
+    // MARK: - Commit Helpers
+
+    private func commitTrueDistance() {
+        if let parsed = parseFloat(trueDistanceText) {
+            dataExport.trueDistance = parsed
+        } else {
+            trueDistanceText = formatFloat(dataExport.trueDistance)
+        }
+    }
+
+    private func commitTrueX() {
+        if let parsed = parseFloat(trueXText) {
+            dataExport.trueX = parsed
+        } else {
+            trueXText = formatFloat(dataExport.trueX)
+        }
+    }
+
+    private func commitTrueY() {
+        if let parsed = parseFloat(trueYText) {
+            dataExport.trueY = parsed
+        } else {
+            trueYText = formatFloat(dataExport.trueY)
+        }
+    }
+}
+
+// MARK: - Helpers
+
+private func formatFloat(_ value: Float) -> String {
+    let s = String(format: "%.2f", value)
+    if s.contains(".") {
+        var trimmed = s
+        while trimmed.hasSuffix("0") { trimmed.removeLast() }
+        if trimmed.hasSuffix(".") { trimmed.removeLast() }
+        return trimmed
+    }
+    return s
+}
+
+private func parseFloat(_ text: String) -> Float? {
+    let normalized = text.replacingOccurrences(of: ",", with: ".")
+    return Float(normalized)
 }
 
 // MARK: - Helper Views
