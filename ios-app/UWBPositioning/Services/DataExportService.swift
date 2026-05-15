@@ -104,17 +104,13 @@ class DataExportService: ObservableObject {
         let distStr = String(format: "%.1f", trueDistance).replacingOccurrences(of: ".", with: "p")
         let filename = "uwb_distance_\(anchorStr)_\(distStr)m_\(dateStr).csv"
 
-        guard let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            logger.error("Cannot access Documents directory")
-            return nil
-        }
-
-        let fileURL = documentsDir.appendingPathComponent(filename)
+        // Write to temporary directory for sharing (avoids UIActivityViewController file access issues)
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
 
         do {
-            try csv.write(to: fileURL, atomically: true, encoding: .utf8)
+            try csv.write(to: tempURL, atomically: true, encoding: .utf8)
             logger.info("Exported CSV: \(filename) (\(self.samples.count) samples)")
-            return fileURL
+            return tempURL
         } catch {
             logger.error("Failed to write CSV: \(error.localizedDescription)")
             return nil

@@ -383,27 +383,30 @@ static void fira_stop_niq(void)
 {
     if (is_started)
     {
-        /* Stop */
+        /* Stop UWB MAC first */
         uwbmac_stop(uwbmac_ctx);
 
-        /* Stop session */
+        /* Stop session — continue cleanup even on failure */
         int r = fira_helper_stop_session(&fira_ctx, session_handle);
         if (r != QERR_SUCCESS)
         {
-            QLOGE("fira_helper_stop_session failed");
-            return;
+            QLOGE("fira_helper_stop_session failed (err=%d)", r);
         }
 
-        /* Uninit session */
+        /* Uninit session — continue cleanup even on failure */
         r = fira_helper_deinit_session(&fira_ctx, session_handle);
         if (r != QERR_SUCCESS)
         {
-            QLOGE("fira_helper_deinit_session failed");
-            return;
+            QLOGE("fira_helper_deinit_session failed (err=%d)", r);
         }
 
         fira_helper_close(&fira_ctx);
-        qfree(output_result.str);
+
+        if (output_result.str)
+        {
+            qfree(output_result.str);
+            output_result.str = NULL;
+        }
 
         is_started = false;
 
