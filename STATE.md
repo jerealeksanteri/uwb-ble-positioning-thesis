@@ -125,9 +125,9 @@
 - [x] `FloorPlanView` — uses dynamic positions from config store, shows HDOP
 - [x] Calibration offsets applied in trilateration pipeline
 - [x] Settings tab added (4 tabs: Floor Plan, Anchors, Measure, Settings)
-- [ ] 3 anchors deployed in test space
-- [ ] Anchor positions measured and configured in app
-- [ ] Simultaneous ranging to all 3 verified
+- [x] 3 anchors deployed in test space
+- [x] Anchor positions measured and configured in app
+- [x] Simultaneous ranging to all 3 verified
 - [ ] Antenna delay calibration performed
 - [ ] Test grid measurements collected (12 points)
 - [ ] Positioning error calculated

@@ -317,8 +317,8 @@ Non-collinear triangle, same height (~1.2m), clear LOS to measurement area.
 7. **Implement GDOP analysis** — how anchor geometry affects accuracy
 
 ### Verification
-- [ ] All 3 anchors range simultaneously
-- [ ] 2D position displayed on floor plan in real-time
+- [x] All 3 anchors range simultaneously
+- [x] 2D position displayed on floor plan in real-time
 - [ ] Position error < 30 cm at most LOS test points
 - [ ] Calibration reduces systematic bias
 
