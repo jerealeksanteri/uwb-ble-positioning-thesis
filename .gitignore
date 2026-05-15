@@ -26,6 +26,7 @@ ios-app/**/*.ipa
 ios-app/**/*.dSYM.zip
 ios-app/**/*.dSYM
 ios-app/**/Pods/
+*.xcuserstate
 ios-app/**/*.xcworkspace
 !ios-app/**/*.xcworkspace/contents.xcworkspacedata
 

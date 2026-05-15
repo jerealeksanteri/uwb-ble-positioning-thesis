@@ -5,7 +5,7 @@
 
 ---
 
-## Current Phase: Phase 3 — Anchor Firmware — UWB & NI Protocol
+## Current Phase: Phase 5 — iOS App — NI Sessions & Ranging
 
 ## Overall Progress
 
@@ -13,9 +13,9 @@
 |-------|--------|-------|
 | 1. Dev Environment Setup & Smoke Test | COMPLETE | |
 | 2. Anchor Firmware — BLE & Identity | COMPLETE | |
-| 3. Anchor Firmware — UWB & NI Protocol | NOT STARTED | Blocked by Phase 2 |
-| 4. iOS App — Project Setup & CoreBluetooth | NOT STARTED | Blocked by Phase 1 |
-| 5. iOS App — NI Sessions & Ranging | NOT STARTED | Blocked by Phase 3, 4 |
+| 3. Anchor Firmware — UWB & NI Protocol | COMPLETE | All SDK-provided; verified with modified firmware |
+| 4. iOS App — Project Setup & CoreBluetooth | COMPLETE | BLE scan, connect, GATT, ACD all verified on device |
+| 5. iOS App — NI Sessions & Ranging | NOT STARTED | |
 | 6. iOS App — Trilateration & UI | NOT STARTED | Blocked by Phase 5 |
 | 7. System Integration & Single-Anchor Test | NOT STARTED | Blocked by Phase 6 |
 | 8. Multi-Anchor Positioning & Calibration | NOT STARTED | Blocked by Phase 7 |
@@ -58,28 +58,31 @@
 
 ## Phase 3: Anchor Firmware — UWB & NI Protocol
 
-- [ ] DW3110 SPI communication verified (device ID read)
-- [ ] NI library initialized, 38-byte config data generated
-- [ ] GATT characteristic contains valid config data
-- [ ] Shareable config write handler implemented
-- [ ] All 3 boards flashed with respective configs
-- [ ] Single anchor ranges with Qorvo iOS app
-- [ ] All 3 anchors range simultaneously with Qorvo app
+> Items 1-4 are implemented by Qorvo SDK (libniq + ble_niq + QNIS/ANIS services). Verified working via successful ranging.
+
+- [x] DW3110 SPI communication verified (device ID read)
+- [x] NI library initialized, 38-byte config data generated
+- [x] GATT characteristic contains valid config data
+- [x] Shareable config write handler implemented
+- [x] All 3 boards flashed with respective configs
+- [x] Single anchor ranges with Qorvo iOS app
+- [x] All 3 anchors range simultaneously with Qorvo app
 
 ## Phase 4: iOS App — Project Setup & CoreBluetooth
 
-- [ ] Xcode project created (SwiftUI, iOS 17.0+)
-- [ ] Info.plist configured (NI + BLE usage descriptions)
-- [ ] Nearby Interaction capability enabled
-- [ ] Background Modes enabled (BLE + NI)
-- [ ] `BluetoothManager` implemented (scan, connect, GATT)
-- [ ] `Anchor` model defined
-- [ ] `AnchorListView` shows discovered anchors
-- [ ] `Constants.swift` with NI GATT UUIDs
-- [ ] App builds and runs on iPhone 16 Pro Max
-- [ ] BLE scan discovers all 3 anchors
-- [ ] BLE connection + GATT discovery works
-- [ ] Accessory Config Data read successfully
+- [x] Xcode project created (SwiftUI, iOS 26.5)
+- [x] Info.plist configured (NI + BLE usage descriptions)
+- [x] Nearby Interaction capability enabled
+- [x] Background Modes enabled (BLE + NI)
+- [x] `BluetoothManager` implemented (scan, connect, GATT, NI messages)
+- [x] `Anchor` model defined
+- [x] `AnchorListView` shows discovered anchors
+- [x] `Constants.swift` with QNIS GATT UUIDs (corrected from firmware source)
+- [x] App builds successfully (xcodebuild, no code signing)
+- [x] App runs on iPhone 16 Pro Max
+- [x] BLE scan discovers all 3 anchors
+- [x] BLE connection + GATT discovery works
+- [x] Accessory Config Data read successfully
 
 ## Phase 5: iOS App — NI Sessions & Ranging
 
@@ -152,6 +155,8 @@
 | 2026-02-22 | SwiftUI (not UIKit) | Modern iOS framework; user has some Flutter experience so declarative UI is familiar |
 | 2026-05-15 | CMake build (not SEGGER ES) | Qorvo SDK uses CMake + ARM GCC, not .emProject files; custom `build_anchor.sh` calls cmake with `-DANCHOR_ID=N` |
 | 2026-05-15 | CONFIG_LOG enabled | RTT logging via QLOG macros; changed `CONFIG_LOG OFF` → `ON` in QANI-FreeRTOS.cmake |
+| 2026-05-15 | Phase 3 items 1-4 already in SDK | Qorvo QANI firmware includes complete NI protocol: SPI/DW3110 driver, libniq, GATT services (QNIS+ANIS), shareable config handler |
+| 2026-05-15 | Corrected BLE UUIDs: QNIS not Apple NI spec | Firmware uses QNIS service (2E938FD0-6A61-11ED-...) not Apple standard (15171523-...) |
 
 ## Known Issues
 

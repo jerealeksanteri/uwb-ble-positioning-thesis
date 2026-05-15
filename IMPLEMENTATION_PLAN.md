@@ -90,9 +90,9 @@ Customize the Qorvo NI firmware so each anchor advertises with a unique BLE name
 7. **Copy relevant source files into repo** under `firmware/anchor/`
 
 ### Verification
-- [ ] nRF Connect mobile app sees 3 distinct "UWB-Anchor-X" devices
-- [ ] GATT service discovery shows NI service UUID
-- [ ] RTT logs show BLE events (connect/disconnect/read/write)
+- [x] nRF Connect mobile app sees 3 distinct "UWB-Anchor-X" devices
+- [x] GATT service discovery shows NI service UUID
+- [x] RTT logs show BLE events (connect/disconnect/read/write)
 
 ---
 
