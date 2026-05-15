@@ -5,14 +5,14 @@
 
 ---
 
-## Current Phase: Phase 1 — Development Environment Setup & Smoke Test
+## Current Phase: Phase 3 — Anchor Firmware — UWB & NI Protocol
 
 ## Overall Progress
 
 | Phase | Status | Notes |
 |-------|--------|-------|
-| 1. Dev Environment Setup & Smoke Test | NOT STARTED | |
-| 2. Anchor Firmware — BLE & Identity | NOT STARTED | Blocked by Phase 1 |
+| 1. Dev Environment Setup & Smoke Test | COMPLETE | |
+| 2. Anchor Firmware — BLE & Identity | COMPLETE | |
 | 3. Anchor Firmware — UWB & NI Protocol | NOT STARTED | Blocked by Phase 2 |
 | 4. iOS App — Project Setup & CoreBluetooth | NOT STARTED | Blocked by Phase 1 |
 | 5. iOS App — NI Sessions & Ranging | NOT STARTED | Blocked by Phase 3, 4 |
@@ -44,17 +44,17 @@
 
 ## Phase 2: Anchor Firmware — BLE & Identity
 
-- [ ] Qorvo NI firmware source code studied and understood
-- [ ] `anchor_config.h` created with ANCHOR_ID defines
-- [ ] BLE advertising modified with unique device names
-- [ ] 3 build configurations created in SEGGER project
-- [ ] LED status indicators implemented
-- [ ] RTT debug logging added
-- [ ] Source files copied into `firmware/anchor/` in repo
-- [ ] nRF Connect app sees "UWB-Anchor-1"
-- [ ] nRF Connect app sees "UWB-Anchor-2"
-- [ ] nRF Connect app sees "UWB-Anchor-3"
-- [ ] GATT NI service UUID visible in service discovery
+- [x] Qorvo NI firmware source code studied and understood
+- [x] `anchor_config.h` created with ANCHOR_ID defines
+- [x] BLE advertising modified with unique device names
+- [x] 3 build configurations created (cmake `-DANCHOR_ID=1/2/3`)
+- [x] LED status indicators implemented
+- [x] RTT debug logging added
+- [x] Source files copied into `firmware/anchor/` in repo
+- [x] nRF Connect app sees "UWB-Anchor-1"
+- [x] nRF Connect app sees "UWB-Anchor-2"
+- [x] nRF Connect app sees "UWB-Anchor-3"
+- [x] GATT NI service UUID visible in service discovery
 
 ## Phase 3: Anchor Firmware — UWB & NI Protocol
 
@@ -150,10 +150,13 @@
 | 2026-02-22 | 2D positioning (not 3D) | 3 anchors is minimum for 3D; 2D is more robust and sufficient for thesis |
 | 2026-02-22 | Direct iPhone-to-anchor ranging via NI | iPhone U2 chip supports direct UWB ranging with DW3110; no board-to-board needed |
 | 2026-02-22 | SwiftUI (not UIKit) | Modern iOS framework; user has some Flutter experience so declarative UI is familiar |
+| 2026-05-15 | CMake build (not SEGGER ES) | Qorvo SDK uses CMake + ARM GCC, not .emProject files; custom `build_anchor.sh` calls cmake with `-DANCHOR_ID=N` |
+| 2026-05-15 | CONFIG_LOG enabled | RTT logging via QLOG macros; changed `CONFIG_LOG OFF` → `ON` in QANI-FreeRTOS.cmake |
 
 ## Known Issues
 
-_None yet — project hasn't started implementation._
+- `nrfjprog` shows non-fatal J-Link error -256 (version mismatch between nrfjprog 10.24.2 and J-Link V9.42) — all operations still succeed
+- VSCode IntelliSense shows `#include` errors for SDK headers — false positives, the CMake build resolves all paths correctly
 
 ## Notes
 
