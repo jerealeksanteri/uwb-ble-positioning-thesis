@@ -2,15 +2,15 @@ import SwiftUI
 import CoreBluetooth
 
 struct ContentView: View {
-    @StateObject private var bluetoothManager = BluetoothManager()
+    @StateObject private var viewModel = PositioningViewModel()
 
     var body: some View {
         NavigationStack {
             Group {
-                if bluetoothManager.bluetoothState == .poweredOn {
-                    AnchorListView(bluetoothManager: bluetoothManager)
+                if viewModel.bluetoothManager.bluetoothState == .poweredOn {
+                    AnchorListView(viewModel: viewModel)
                 } else {
-                    BluetoothWarningView(state: bluetoothManager.bluetoothState)
+                    BluetoothWarningView(state: viewModel.bluetoothManager.bluetoothState)
                 }
             }
             .navigationTitle("UWB Positioning")

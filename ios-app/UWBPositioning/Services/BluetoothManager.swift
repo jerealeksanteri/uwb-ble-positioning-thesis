@@ -24,8 +24,12 @@ class BluetoothManager: NSObject, ObservableObject {
     @Published var bluetoothState: CBManagerState = .unknown
 
     /// Callback fired when accessory config data is received from an anchor.
-    /// Phase 5 will use this to trigger NI session creation.
+    /// Used by PositioningViewModel to trigger NI session creation.
     var onAccessoryConfigDataReceived: ((Anchor) -> Void)?
+
+    /// Callback fired when an anchor disconnects at the BLE level.
+    /// Used by PositioningViewModel to stop the corresponding NI session.
+    var onAnchorDisconnected: ((Anchor) -> Void)?
 
     override init() {
         super.init()
@@ -165,6 +169,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
         anchor.rxCharacteristic = nil
         anchor.txCharacteristic = nil
         anchor.accessoryConfigData = nil
+        onAnchorDisconnected?(anchor)
     }
 }
 

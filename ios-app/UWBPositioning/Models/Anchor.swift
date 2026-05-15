@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import CoreBluetooth
+import simd
 
 /// Connection and ranging state of an anchor
 enum AnchorState: String {
@@ -35,6 +36,17 @@ class Anchor: Identifiable, ObservableObject {
     /// Raw Accessory Configuration Data received from anchor (without message ID prefix)
     @Published var accessoryConfigData: Data?
 
+    // MARK: - UWB Ranging Data (Phase 5)
+
+    /// Distance to this anchor in meters (nil when not ranging)
+    @Published var distance: Float?
+
+    /// Direction vector to this anchor (nil if not available)
+    @Published var direction: simd_float3?
+
+    /// Timestamp of the last distance update
+    @Published var lastDistanceUpdate: Date?
+
     // MARK: - GATT characteristic references (set during service discovery)
 
     /// QNIS RX characteristic — write commands to anchor
@@ -48,5 +60,12 @@ class Anchor: Identifiable, ObservableObject {
         self.anchorId = anchorId
         self.name = name
         self.peripheral = peripheral
+    }
+
+    /// Reset ranging data when session ends or disconnects
+    func clearRangingData() {
+        distance = nil
+        direction = nil
+        lastDistanceUpdate = nil
     }
 }

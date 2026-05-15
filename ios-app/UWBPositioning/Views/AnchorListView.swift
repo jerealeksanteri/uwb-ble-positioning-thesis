@@ -2,13 +2,15 @@ import SwiftUI
 import CoreBluetooth
 
 struct AnchorListView: View {
-    @ObservedObject var bluetoothManager: BluetoothManager
+    @ObservedObject var viewModel: PositioningViewModel
+
+    private var bluetoothManager: BluetoothManager { viewModel.bluetoothManager }
 
     var body: some View {
         List {
             Section {
                 ForEach(bluetoothManager.sortedAnchors) { anchor in
-                    AnchorRow(anchor: anchor, bluetoothManager: bluetoothManager)
+                    AnchorRow(anchor: anchor, viewModel: viewModel)
                 }
 
                 if bluetoothManager.sortedAnchors.isEmpty {
@@ -45,7 +47,7 @@ struct AnchorListView: View {
 
 private struct AnchorRow: View {
     @ObservedObject var anchor: Anchor
-    let bluetoothManager: BluetoothManager
+    let viewModel: PositioningViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -55,6 +57,23 @@ private struct AnchorRow: View {
                     .font(.headline)
                 Spacer()
                 StateBadge(state: anchor.state)
+            }
+
+            // Distance display when ranging
+            if anchor.state == .ranging {
+                HStack {
+                    if let distance = anchor.distance {
+                        Label(String(format: "%.2f m", distance), systemImage: "ruler")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.purple)
+                    } else {
+                        Label("Waiting for distance...", systemImage: "ruler")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                }
             }
 
             // Details
@@ -84,9 +103,9 @@ private struct AnchorRow: View {
             Button {
                 switch anchor.state {
                 case .discovered, .disconnected:
-                    bluetoothManager.connect(anchor)
+                    viewModel.bluetoothManager.connect(anchor)
                 case .connecting, .connected, .configReceived, .ranging:
-                    bluetoothManager.disconnect(anchor)
+                    viewModel.disconnectAnchor(anchor)
                 }
             } label: {
                 Text(connectButtonTitle)
