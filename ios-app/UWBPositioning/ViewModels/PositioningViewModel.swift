@@ -158,8 +158,10 @@ class PositioningViewModel: ObservableObject {
 
     // MARK: - Public API
 
-    /// Disconnect an anchor and stop its NI session
+    /// Disconnect an anchor: stop UWB, then NI session, then BLE
     func disconnectAnchor(_ anchor: Anchor) {
+        // Send UWB stop message to anchor first so it can cleanly shut down
+        bluetoothManager.sendStop(anchor)
         niManager.stopSession(for: anchor)
         bluetoothManager.disconnect(anchor)
     }
