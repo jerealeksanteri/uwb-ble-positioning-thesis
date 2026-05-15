@@ -15,16 +15,18 @@ struct MeasureView: View {
 
     var body: some View {
         Form {
-            configSection
+            modePicker
 
-            recordingSection
-
-            if dataExport.sampleCount > 0 {
-                statisticsSection
-            }
-
-            if !dataExport.samples.isEmpty && !dataExport.isRecording {
-                exportSection
+            if dataExport.recordingMode == .distance {
+                distanceConfigSection
+                distanceRecordingSection
+                if dataExport.sampleCount > 0 { distanceStatisticsSection }
+                if !dataExport.samples.isEmpty && !dataExport.isRecording { distanceExportSection }
+            } else {
+                positionConfigSection
+                positionRecordingSection
+                if dataExport.positionSampleCount > 0 { positionStatisticsSection }
+                if !dataExport.positionSamples.isEmpty && !dataExport.isRecording { positionExportSection }
             }
         }
         .sheet(isPresented: $showShareSheet) {
@@ -34,10 +36,24 @@ struct MeasureView: View {
         }
     }
 
-    // MARK: - Config Section
+    // MARK: - Mode Picker
 
     @ViewBuilder
-    private var configSection: some View {
+    private var modePicker: some View {
+        Picker("Mode", selection: $viewModel.dataExportService.recordingMode) {
+            ForEach(DataExportService.RecordingMode.allCases, id: \.self) { mode in
+                Text(mode.rawValue).tag(mode)
+            }
+        }
+        .pickerStyle(.segmented)
+        .disabled(dataExport.isRecording)
+        .listRowBackground(Color.clear)
+    }
+
+    // MARK: - Distance Mode
+
+    @ViewBuilder
+    private var distanceConfigSection: some View {
         Section("Configuration") {
             Picker("Anchor", selection: $viewModel.dataExportService.recordingAnchorId) {
                 Text("Select...").tag(nil as Int?)
@@ -79,29 +95,10 @@ struct MeasureView: View {
         }
     }
 
-    // MARK: - Recording Section
-
     @ViewBuilder
-    private var recordingSection: some View {
+    private var distanceRecordingSection: some View {
         Section("Recording") {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("\(dataExport.sampleCount) / \(dataExport.targetSampleCount)")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .monospacedDigit()
-                    Text("samples")
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    if dataExport.isRecording {
-                        ProgressView()
-                    }
-                }
-
-                ProgressView(value: Double(dataExport.sampleCount),
-                             total: Double(dataExport.targetSampleCount))
-                    .tint(dataExport.isRecording ? .red : .blue)
-            }
+            sampleCountView
 
             if dataExport.isRecording,
                let anchorId = dataExport.recordingAnchorId,
@@ -135,21 +132,13 @@ struct MeasureView: View {
                 .tint(dataExport.isRecording ? .red : .green)
                 .disabled(!dataExport.isRecording && dataExport.recordingAnchorId == nil)
 
-                if !dataExport.isRecording && dataExport.sampleCount > 0 {
-                    Button("Discard") {
-                        dataExport.discardRecording()
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.orange)
-                }
+                discardButton
             }
         }
     }
 
-    // MARK: - Statistics Section
-
     @ViewBuilder
-    private var statisticsSection: some View {
+    private var distanceStatisticsSection: some View {
         Section("Statistics") {
             if let mean = dataExport.meanDistance {
                 StatRow(label: "Mean distance", value: String(format: "%.4f m", mean))
@@ -166,10 +155,8 @@ struct MeasureView: View {
         }
     }
 
-    // MARK: - Export Section
-
     @ViewBuilder
-    private var exportSection: some View {
+    private var distanceExportSection: some View {
         Section("Export") {
             Button {
                 if let url = dataExport.exportCSV() {
@@ -179,6 +166,149 @@ struct MeasureView: View {
             } label: {
                 Label("Export CSV & Share", systemImage: "square.and.arrow.up")
             }
+        }
+    }
+
+    // MARK: - Position Mode
+
+    @ViewBuilder
+    private var positionConfigSection: some View {
+        Section("True Position (meters)") {
+            HStack {
+                Text("X")
+                    .frame(width: 20)
+                TextField("X", value: $viewModel.dataExportService.trueX, format: .number)
+                    .keyboardType(.decimalPad)
+                    .textFieldStyle(.roundedBorder)
+
+                Text("Y")
+                    .frame(width: 20)
+                TextField("Y", value: $viewModel.dataExportService.trueY, format: .number)
+                    .keyboardType(.decimalPad)
+                    .textFieldStyle(.roundedBorder)
+            }
+            .disabled(dataExport.isRecording)
+
+            Stepper("Samples: \(dataExport.targetSampleCount)",
+                    value: $viewModel.dataExportService.targetSampleCount,
+                    in: 10...500, step: 10)
+                .disabled(dataExport.isRecording)
+
+            if rangingAnchors.count < 3 {
+                Label("Need 3 ranging anchors (\(rangingAnchors.count)/3)",
+                      systemImage: "exclamationmark.triangle")
+                    .foregroundStyle(.orange)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var positionRecordingSection: some View {
+        Section("Recording") {
+            sampleCountView
+
+            if dataExport.isRecording || dataExport.positionSampleCount > 0 {
+                if let pos = viewModel.computedPosition {
+                    HStack {
+                        Label(String(format: "(%.3f, %.3f)", pos.x, pos.y),
+                              systemImage: "location")
+                            .font(.title3)
+                            .monospacedDigit()
+                        Spacer()
+                        if let hdop = viewModel.currentHDOP {
+                            Text(String(format: "HDOP %.1f", hdop))
+                                .font(.caption)
+                                .foregroundStyle(hdop < 2 ? .green : hdop < 5 ? .orange : .red)
+                        }
+                    }
+                }
+            }
+
+            HStack {
+                Button(dataExport.isRecording ? "Stop" : "Start Recording") {
+                    if dataExport.isRecording {
+                        dataExport.stopRecording()
+                    } else {
+                        dataExport.startPositionRecording(
+                            trueX: dataExport.trueX,
+                            trueY: dataExport.trueY,
+                            targetCount: dataExport.targetSampleCount
+                        )
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(dataExport.isRecording ? .red : .green)
+                .disabled(!dataExport.isRecording && rangingAnchors.count < 3)
+
+                discardButton
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var positionStatisticsSection: some View {
+        Section("Statistics") {
+            if let err = dataExport.meanPositionError {
+                StatRow(label: "Mean position error", value: String(format: "%.4f m", err))
+            }
+            if let c50 = dataExport.cep50 {
+                StatRow(label: "CEP50", value: String(format: "%.4f m", c50))
+            }
+            if let c95 = dataExport.cep95 {
+                StatRow(label: "CEP95", value: String(format: "%.4f m", c95))
+            }
+            if let hdop = dataExport.meanHDOP {
+                StatRow(label: "Mean HDOP", value: String(format: "%.3f", hdop))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var positionExportSection: some View {
+        Section("Export") {
+            Button {
+                if let url = dataExport.exportPositionCSV() {
+                    shareURL = url
+                    showShareSheet = true
+                }
+            } label: {
+                Label("Export CSV & Share", systemImage: "square.and.arrow.up")
+            }
+        }
+    }
+
+    // MARK: - Shared Components
+
+    @ViewBuilder
+    private var sampleCountView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("\(dataExport.sampleCount) / \(dataExport.targetSampleCount)")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .monospacedDigit()
+                Text("samples")
+                    .foregroundStyle(.secondary)
+                Spacer()
+                if dataExport.isRecording {
+                    ProgressView()
+                }
+            }
+
+            ProgressView(value: Double(dataExport.sampleCount),
+                         total: Double(dataExport.targetSampleCount))
+                .tint(dataExport.isRecording ? .red : .blue)
+        }
+    }
+
+    @ViewBuilder
+    private var discardButton: some View {
+        if !dataExport.isRecording && dataExport.sampleCount > 0 {
+            Button("Discard") {
+                dataExport.discardRecording()
+            }
+            .buttonStyle(.bordered)
+            .tint(.orange)
         }
     }
 }
