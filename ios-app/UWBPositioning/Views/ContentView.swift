@@ -23,6 +23,14 @@ struct ContentView: View {
                     .tabItem {
                         Label("Anchors", systemImage: "antenna.radiowaves.left.and.right")
                     }
+
+                    NavigationStack {
+                        MeasureView(viewModel: viewModel)
+                            .navigationTitle("Measure")
+                    }
+                    .tabItem {
+                        Label("Measure", systemImage: "chart.bar.doc.horizontal")
+                    }
                 }
             } else {
                 BluetoothWarningView(state: viewModel.bluetoothManager.bluetoothState)
