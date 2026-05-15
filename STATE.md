@@ -5,7 +5,7 @@
 
 ---
 
-## Current Phase: Phase 5 — iOS App — NI Sessions & Ranging
+## Current Phase: Phase 6 — iOS App — Trilateration & UI
 
 ## Overall Progress
 
@@ -15,8 +15,8 @@
 | 2. Anchor Firmware — BLE & Identity | COMPLETE | |
 | 3. Anchor Firmware — UWB & NI Protocol | COMPLETE | All SDK-provided; verified with modified firmware |
 | 4. iOS App — Project Setup & CoreBluetooth | COMPLETE | BLE scan, connect, GATT, ACD all verified on device |
-| 5. iOS App — NI Sessions & Ranging | NOT STARTED | |
-| 6. iOS App — Trilateration & UI | NOT STARTED | Blocked by Phase 5 |
+| 5. iOS App — NI Sessions & Ranging | COMPLETE | NI sessions, distance updates, session recovery all working |
+| 6. iOS App — Trilateration & UI | IN PROGRESS | TrilaterationEngine, FloorPlanView, TabView navigation |
 | 7. System Integration & Single-Anchor Test | NOT STARTED | Blocked by Phase 6 |
 | 8. Multi-Anchor Positioning & Calibration | NOT STARTED | Blocked by Phase 7 |
 | 9. Measurements & Thesis Data Collection | NOT STARTED | Blocked by Phase 8 |
@@ -97,13 +97,14 @@
 
 ## Phase 6: iOS App — Trilateration & UI
 
-- [ ] `TrilaterationEngine` implemented (least-squares)
+- [x] `TrilaterationEngine` implemented (least-squares + weighted variant)
 - [ ] Trilateration verified with synthetic test data
-- [ ] `PositionFilter` implemented (moving average)
-- [ ] `FloorPlanView` renders anchors and position
-- [ ] `AnchorListView` shows distances and status
+- [x] `PositionFilter` implemented (moving average, window=5)
+- [x] `FloorPlanView` renders anchors and position (Canvas-based)
+- [x] `AnchorListView` shows distances and status
 - [ ] Real-time position tracking working
-- [ ] Weighted trilateration variant implemented
+- [x] Weighted trilateration variant implemented
+- [x] TabView navigation (Floor Plan + Anchors tabs)
 
 ## Phase 7: System Integration & Single-Anchor Validation
 

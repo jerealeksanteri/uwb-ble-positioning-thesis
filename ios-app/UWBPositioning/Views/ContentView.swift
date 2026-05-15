@@ -5,15 +5,28 @@ struct ContentView: View {
     @StateObject private var viewModel = PositioningViewModel()
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if viewModel.bluetoothManager.bluetoothState == .poweredOn {
-                    AnchorListView(viewModel: viewModel)
-                } else {
-                    BluetoothWarningView(state: viewModel.bluetoothManager.bluetoothState)
+        Group {
+            if viewModel.bluetoothManager.bluetoothState == .poweredOn {
+                TabView {
+                    NavigationStack {
+                        FloorPlanView(viewModel: viewModel)
+                            .navigationTitle("Floor Plan")
+                    }
+                    .tabItem {
+                        Label("Floor Plan", systemImage: "map")
+                    }
+
+                    NavigationStack {
+                        AnchorListView(viewModel: viewModel)
+                            .navigationTitle("Anchors")
+                    }
+                    .tabItem {
+                        Label("Anchors", systemImage: "antenna.radiowaves.left.and.right")
+                    }
                 }
+            } else {
+                BluetoothWarningView(state: viewModel.bluetoothManager.bluetoothState)
             }
-            .navigationTitle("UWB Positioning")
         }
     }
 }

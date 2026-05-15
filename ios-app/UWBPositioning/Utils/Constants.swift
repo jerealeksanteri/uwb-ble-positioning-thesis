@@ -39,3 +39,15 @@ enum BLEConstants {
     /// BLE name prefix for filtering anchor devices
     static let anchorNamePrefix = "UWB-Anchor-"
 }
+
+// MARK: - Default Anchor Positions (meters)
+
+/// Default anchor positions for the test environment.
+/// These will be configurable in Phase 8 via SettingsView.
+enum AnchorDefaults {
+    static let positions: [(anchorId: Int, x: Float, y: Float)] = [
+        (anchorId: 1, x: 0.0, y: 0.0),
+        (anchorId: 2, x: 5.0, y: 0.0),
+        (anchorId: 3, x: 2.5, y: 4.0),
+    ]
+}
