@@ -4,11 +4,12 @@ struct FloorPlanView: View {
     @ObservedObject var viewModel: PositioningViewModel
 
     private var bluetoothManager: BluetoothManager { viewModel.bluetoothManager }
+    private var anchorConfigs: [AnchorConfig] { viewModel.anchorConfigStore.configs }
 
     var body: some View {
         GeometryReader { geometry in
             let transform = CoordinateTransform(
-                anchorPositions: AnchorDefaults.positions.map { (x: $0.x, y: $0.y) },
+                anchorPositions: anchorConfigs.map { (x: $0.x, y: $0.y) },
                 canvasSize: geometry.size
             )
 
@@ -30,13 +31,19 @@ struct FloorPlanView: View {
     @ViewBuilder
     private var positionStatusOverlay: some View {
         if let pos = viewModel.computedPosition {
-            Text(String(format: "(%.2f, %.2f) m", pos.x, pos.y))
-                .font(.caption)
-                .fontWeight(.medium)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.ultraThinMaterial)
-                .clipShape(Capsule())
+            HStack(spacing: 8) {
+                Text(String(format: "(%.2f, %.2f) m", pos.x, pos.y))
+                    .fontWeight(.medium)
+                if let hdop = viewModel.currentHDOP {
+                    Text(String(format: "HDOP %.1f", hdop))
+                        .foregroundStyle(hdop < 2 ? .green : hdop < 5 ? .orange : .red)
+                }
+            }
+            .font(.caption)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(.ultraThinMaterial)
+            .clipShape(Capsule())
         } else {
             let rangingCount = bluetoothManager.anchors.values.filter { $0.state == .ranging }.count
             Text("Waiting for distances (\(rangingCount)/3 anchors ranging)")
@@ -96,13 +103,13 @@ struct FloorPlanView: View {
     }
 
     private func drawAnchors(context: inout GraphicsContext, transform: CoordinateTransform) {
-        for anchorPos in AnchorDefaults.positions {
+        for config in anchorConfigs {
             let screenPos = transform.worldToScreen(
-                CGPoint(x: CGFloat(anchorPos.x), y: CGFloat(anchorPos.y))
+                CGPoint(x: CGFloat(config.x), y: CGFloat(config.y))
             )
 
             // Find the matching anchor for state and distance info
-            let anchor = bluetoothManager.anchors.values.first { $0.anchorId == anchorPos.anchorId }
+            let anchor = bluetoothManager.anchors.values.first { $0.anchorId == config.anchorId }
             let isRanging = anchor?.state == .ranging
             let color: Color = isRanging ? .purple : .gray
 
@@ -120,7 +127,7 @@ struct FloorPlanView: View {
 
             // Anchor label
             context.draw(
-                Text("A\(anchorPos.anchorId)").font(.caption).fontWeight(.bold).foregroundColor(color),
+                Text("A\(config.anchorId)").font(.caption).fontWeight(.bold).foregroundColor(color),
                 at: CGPoint(x: screenPos.x, y: screenPos.y + height / 3 + 16)
             )
 
