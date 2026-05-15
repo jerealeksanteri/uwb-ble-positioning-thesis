@@ -12,6 +12,7 @@ class PositioningViewModel: ObservableObject {
 
     @Published var bluetoothManager = BluetoothManager()
     let niManager = NearbyInteractionManager()
+    @Published var dataExportService = DataExportService()
 
     // MARK: - Positioning
 
@@ -71,6 +72,16 @@ class PositioningViewModel: ObservableObject {
             guard let self else { return }
             self.logger.warning("NI session invalidated for \(anchor.name)")
             self.handleSessionInvalidation(anchor: anchor)
+        }
+
+        // When NI delivers a distance update, forward to DataExportService if recording
+        niManager.onDistanceUpdate = { [weak self] anchor, distance, direction in
+            guard let self else { return }
+            self.dataExportService.recordSample(
+                anchorId: anchor.anchorId,
+                measuredDistance: distance,
+                direction: direction
+            )
         }
 
         // When BLE disconnects, stop the NI session for that anchor

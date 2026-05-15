@@ -16,7 +16,7 @@
 | 3. Anchor Firmware — UWB & NI Protocol | COMPLETE | All SDK-provided; verified with modified firmware |
 | 4. iOS App — Project Setup & CoreBluetooth | COMPLETE | BLE scan, connect, GATT, ACD all verified on device |
 | 5. iOS App — NI Sessions & Ranging | COMPLETE | NI sessions, distance updates, session recovery all working |
-| 6. iOS App — Trilateration & UI | IN PROGRESS | TrilaterationEngine, FloorPlanView, TabView navigation |
+| 6. iOS App — Trilateration & UI | COMPLETE | TrilaterationEngine, FloorPlanView, TabView navigation, verified on device |
 | 7. System Integration & Single-Anchor Test | NOT STARTED | Blocked by Phase 6 |
 | 8. Multi-Anchor Positioning & Calibration | NOT STARTED | Blocked by Phase 7 |
 | 9. Measurements & Thesis Data Collection | NOT STARTED | Blocked by Phase 8 |
@@ -98,11 +98,11 @@
 ## Phase 6: iOS App — Trilateration & UI
 
 - [x] `TrilaterationEngine` implemented (least-squares + weighted variant)
-- [ ] Trilateration verified with synthetic test data
+- [x] Trilateration verified on device with live data
 - [x] `PositionFilter` implemented (moving average, window=5)
 - [x] `FloorPlanView` renders anchors and position (Canvas-based)
 - [x] `AnchorListView` shows distances and status
-- [ ] Real-time position tracking working
+- [x] Real-time position tracking working
 - [x] Weighted trilateration variant implemented
 - [x] TabView navigation (Floor Plan + Anchors tabs)
 

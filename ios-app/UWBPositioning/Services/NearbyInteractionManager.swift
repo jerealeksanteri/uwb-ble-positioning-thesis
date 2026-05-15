@@ -29,6 +29,9 @@ class NearbyInteractionManager: NSObject {
     /// Called when a session is invalidated so the coordinator can attempt recovery.
     var onSessionInvalidated: ((Anchor) -> Void)?
 
+    /// Called on every NI distance update. Used by DataExportService to record individual samples.
+    var onDistanceUpdate: ((Anchor, Float, simd_float3?) -> Void)?
+
     // MARK: - Public API
 
     /// Start an NI session for the given anchor using its accessory config data.
@@ -130,6 +133,7 @@ extension NearbyInteractionManager: NISessionDelegate {
         if let distance = object.distance {
             anchor.distance = distance
             anchor.lastDistanceUpdate = Date()
+            onDistanceUpdate?(anchor, distance, object.direction)
         }
 
         if object.direction != nil {
