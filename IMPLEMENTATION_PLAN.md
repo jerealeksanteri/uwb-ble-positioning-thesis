@@ -246,10 +246,10 @@ Linear least-squares: subtract first circle equation from the others to get `Ax 
 7. **Implement weighted trilateration variant** — weight inversely by distance squared (closer anchors more trusted)
 
 ### Verification
-- [ ] Trilateration correct with synthetic test values
-- [ ] Floor plan renders anchors and position dot
-- [ ] Real-time position tracking with all 3 anchors
-- [ ] Position filter reduces visible jitter
+- [x] Trilateration correct with synthetic test values
+- [x] Floor plan renders anchors and position dot
+- [x] Real-time position tracking with all 3 anchors
+- [x] Position filter reduces visible jitter
 
 ---
 
@@ -273,9 +273,9 @@ End-to-end validation of the complete custom stack (not Qorvo's app) with one an
    | Erratic distances | Multipath / antenna obstruction |
 
 ### Verification
-- [ ] Full pipeline works end-to-end with custom app
-- [ ] Distance accuracy within +/- 10 cm at < 5m (LOS)
-- [ ] CSV export works and contains valid data
+- [x] Full pipeline works end-to-end with custom app
+- [x] Distance accuracy within +/- 10 cm at < 5m (LOS)
+- [x] CSV export works and contains valid data
 
 ---
 

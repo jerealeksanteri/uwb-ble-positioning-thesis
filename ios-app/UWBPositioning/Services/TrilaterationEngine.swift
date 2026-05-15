@@ -38,6 +38,43 @@ struct TrilaterationEngine {
         return solve(anchors: matched, distances: dists, weighted: true)
     }
 
+    /// Compute HDOP (Horizontal Dilution of Precision) for the current geometry.
+    ///
+    /// Lower values indicate better anchor geometry. Typical: 1–2 (good), 2–5 (moderate), >5 (poor).
+    /// Returns `nil` if fewer than 3 matched anchors or singular geometry.
+    static func computeHDOP(
+        anchors: [AnchorPosition],
+        distances: [DistanceMeasurement],
+        tagPosition: CGPoint
+    ) -> Float? {
+        guard let (matched, dists) = matchAnchorsAndDistances(anchors: anchors, distances: distances) else {
+            return nil
+        }
+
+        let tx = Float(tagPosition.x)
+        let ty = Float(tagPosition.y)
+
+        // Build H^T H directly (2×2): H rows are unit direction from tag to each anchor
+        var h00: Float = 0, h01: Float = 0, h11: Float = 0
+        for i in 0..<matched.count {
+            let di = max(dists[i], 0.01)
+            let hx = (matched[i].x - tx) / di
+            let hy = (matched[i].y - ty) / di
+            h00 += hx * hx
+            h01 += hx * hy
+            h11 += hy * hy
+        }
+
+        let det = h00 * h11 - h01 * h01
+        guard abs(det) > 1e-6 else { return nil }
+
+        // Q = (H^T H)^-1, HDOP = sqrt(trace(Q))
+        let q00 = h11 / det
+        let q11 = h00 / det
+        let hdop = sqrt(q00 + q11)
+        return hdop.isFinite ? hdop : nil
+    }
+
     // MARK: - Private
 
     /// Match anchors to distances by anchorId, returning paired arrays. Returns nil if < 3 matches.

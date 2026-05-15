@@ -13,6 +13,7 @@ class PositioningViewModel: ObservableObject {
     @Published var bluetoothManager = BluetoothManager()
     let niManager = NearbyInteractionManager()
     @Published var dataExportService = DataExportService()
+    @Published var anchorConfigStore = AnchorConfigStore()
 
     // MARK: - Positioning
 
@@ -24,6 +25,9 @@ class PositioningViewModel: ObservableObject {
 
     /// Whether to use weighted trilateration (closer anchors trusted more)
     @Published var useWeightedTrilateration: Bool = true
+
+    /// Current HDOP value (nil when position not computed)
+    @Published var currentHDOP: Float?
 
     private let positionFilter = PositionFilter(windowSize: 5)
     private var trilaterationTimer: Timer?
@@ -40,6 +44,13 @@ class PositioningViewModel: ObservableObject {
 
         // Forward BluetoothManager's published changes so SwiftUI views update
         bluetoothManager.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
+
+        // Forward AnchorConfigStore changes so FloorPlanView updates
+        anchorConfigStore.objectWillChange
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
@@ -117,13 +128,15 @@ class PositioningViewModel: ObservableObject {
         positionFilter.reset()
         computedPosition = nil
         rawPosition = nil
+        currentHDOP = nil
     }
 
     private func updatePosition() {
         let now = Date()
 
-        // Collect valid distances from ranging anchors with fresh data
+        // Collect valid distances from ranging anchors, applying calibration offsets
         var distances: [TrilaterationEngine.DistanceMeasurement] = []
+        var rawDistanceMap: [Int: Float] = [:]
         for anchor in bluetoothManager.anchors.values {
             guard anchor.state == .ranging,
                   let distance = anchor.distance,
@@ -131,11 +144,17 @@ class PositioningViewModel: ObservableObject {
                   now.timeIntervalSince(lastUpdate) < maxDistanceAge else {
                 continue
             }
-            distances.append(.init(anchorId: anchor.anchorId, distance: distance))
+
+            rawDistanceMap[anchor.anchorId] = distance
+
+            // Apply calibration offset
+            let offset = anchorConfigStore.config(for: anchor.anchorId)?.distanceOffset ?? 0
+            let calibrated = distance + offset
+            distances.append(.init(anchorId: anchor.anchorId, distance: calibrated))
         }
 
-        // Build anchor positions from defaults
-        let anchorPositions = AnchorDefaults.positions.map {
+        // Build anchor positions from config store
+        let anchorPositions = anchorConfigStore.configs.map {
             TrilaterationEngine.AnchorPosition(anchorId: $0.anchorId, x: $0.x, y: $0.y)
         }
 
@@ -150,9 +169,28 @@ class PositioningViewModel: ObservableObject {
         rawPosition = raw
 
         if let raw {
-            computedPosition = positionFilter.addPosition(raw)
+            let filtered = positionFilter.addPosition(raw)
+            computedPosition = filtered
+
+            // Compute HDOP
+            currentHDOP = TrilaterationEngine.computeHDOP(
+                anchors: anchorPositions,
+                distances: distances,
+                tagPosition: raw
+            )
+
+            // Forward to position recording if active
+            if dataExportService.recordingMode == .position && dataExportService.isRecording {
+                dataExportService.recordPositionSample(
+                    computed: raw,
+                    filtered: filtered,
+                    hdop: currentHDOP,
+                    distances: rawDistanceMap
+                )
+            }
         } else {
             computedPosition = nil
+            currentHDOP = nil
         }
     }
 
