@@ -39,7 +39,7 @@ struct MeasureView: View {
     @ViewBuilder
     private var configSection: some View {
         Section("Configuration") {
-            Picker("Anchor", selection: $dataExport.recordingAnchorId) {
+            Picker("Anchor", selection: $viewModel.dataExportService.recordingAnchorId) {
                 Text("Select...").tag(nil as Int?)
                 ForEach(rangingAnchors) { anchor in
                     Text(anchor.name).tag(anchor.anchorId as Int?)
@@ -50,7 +50,7 @@ struct MeasureView: View {
             HStack {
                 Text("True Distance")
                 Spacer()
-                TextField("meters", value: $dataExport.trueDistance, format: .number)
+                TextField("meters", value: $viewModel.dataExportService.trueDistance, format: .number)
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 80)
@@ -73,7 +73,7 @@ struct MeasureView: View {
             }
 
             Stepper("Samples: \(dataExport.targetSampleCount)",
-                    value: $dataExport.targetSampleCount,
+                    value: $viewModel.dataExportService.targetSampleCount,
                     in: 10...500, step: 10)
                 .disabled(dataExport.isRecording)
         }
