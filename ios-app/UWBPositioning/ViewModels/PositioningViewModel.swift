@@ -13,8 +13,17 @@ class PositioningViewModel: ObservableObject {
     @Published var bluetoothManager = BluetoothManager()
     let niManager = NearbyInteractionManager()
 
+    private var cancellables = Set<AnyCancellable>()
+
     init() {
         setupCallbacks()
+
+        // Forward BluetoothManager's published changes so SwiftUI views update
+        bluetoothManager.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Callback Wiring
