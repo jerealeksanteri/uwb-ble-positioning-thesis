@@ -17,8 +17,8 @@
 | 4. iOS App — Project Setup & CoreBluetooth | COMPLETE | BLE scan, connect, GATT, ACD all verified on device |
 | 5. iOS App — NI Sessions & Ranging | COMPLETE | NI sessions, distance updates, session recovery all working |
 | 6. iOS App — Trilateration & UI | COMPLETE | TrilaterationEngine, FloorPlanView, TabView navigation, verified on device |
-| 7. System Integration & Single-Anchor Test | IN PROGRESS | DataExportService, MeasureView, CSV export |
-| 8. Multi-Anchor Positioning & Calibration | NOT STARTED | Blocked by Phase 7 |
+| 7. System Integration & Single-Anchor Test | COMPLETE | DataExportService, MeasureView, CSV export, disconnect fix |
+| 8. Multi-Anchor Positioning & Calibration | IN PROGRESS | AnchorConfigStore, HDOP, position recording, SettingsView |
 | 9. Measurements & Thesis Data Collection | NOT STARTED | Blocked by Phase 8 |
 | 10. Documentation & Thesis Writing | NOT STARTED | Ongoing alongside other phases |
 
