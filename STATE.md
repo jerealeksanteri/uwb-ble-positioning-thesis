@@ -108,20 +108,29 @@
 
 ## Phase 7: System Integration & Single-Anchor Validation
 
-- [ ] End-to-end pipeline works with custom app + one anchor
-- [ ] Distance accuracy validated at multiple distances
-- [ ] `DataExportService` exports CSV
-- [ ] CSV contains valid measurement data
+- [x] End-to-end pipeline works with custom app + one anchor
+- [x] Distance accuracy validated at multiple distances
+- [x] `DataExportService` exports CSV
+- [x] CSV contains valid measurement data
+- [x] Firmware disconnect recovery fix (fira_stop_niq cleanup)
+- [x] iOS sends UWB stop before BLE disconnect
 
 ## Phase 8: Multi-Anchor Positioning & Calibration
 
+- [x] `AnchorConfigStore` — persistent anchor positions + calibration offsets (UserDefaults)
+- [x] `SettingsView` — UI for anchor position and calibration editing
+- [x] HDOP calculation in `TrilaterationEngine`
+- [x] Position recording mode in `DataExportService` (CEP50, CEP95 stats)
+- [x] `MeasureView` — distance + position recording modes
+- [x] `FloorPlanView` — uses dynamic positions from config store, shows HDOP
+- [x] Calibration offsets applied in trilateration pipeline
+- [x] Settings tab added (4 tabs: Floor Plan, Anchors, Measure, Settings)
 - [ ] 3 anchors deployed in test space
 - [ ] Anchor positions measured and configured in app
 - [ ] Simultaneous ranging to all 3 verified
 - [ ] Antenna delay calibration performed
 - [ ] Test grid measurements collected (12 points)
 - [ ] Positioning error calculated
-- [ ] GDOP analysis implemented
 
 ## Phase 9: Measurements & Thesis Data Collection
 
