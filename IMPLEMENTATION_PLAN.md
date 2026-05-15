@@ -122,10 +122,10 @@ IDLE -> BLE_CONNECTED -> CONFIG_SENT (iPhone reads GATT)
 6. **Test with Qorvo iOS app** — confirm all 3 range simultaneously
 
 ### Verification
-- [ ] DW3110 initializes (device ID read succeeds)
-- [ ] NI library generates valid 38-byte config data
-- [ ] Single anchor does end-to-end ranging with Qorvo iOS app
-- [ ] All 3 anchors range simultaneously
+- [x] DW3110 initializes (device ID read succeeds)
+- [x] NI library generates valid 38-byte config data
+- [x] Single anchor does end-to-end ranging with Qorvo iOS app
+- [x] All 3 anchors range simultaneously
 
 ---
 
@@ -180,11 +180,11 @@ static let accessoryRx = CBUUID(string: "15171526-4947-11E9-8646-D663BD873D93")
 ```
 
 ### Verification
-- [ ] App builds and runs on iPhone 16 Pro Max
-- [ ] BLE scan discovers all 3 anchors by name
-- [ ] BLE connection + GATT discovery succeeds
-- [ ] Accessory Config Data (38 bytes) is read successfully
-- [ ] No permission issues
+- [x] App builds and runs on iPhone 16 Pro Max
+- [x] BLE scan discovers all 3 anchors by name
+- [x] BLE connection + GATT discovery succeeds
+- [x] Accessory Config Data (38 bytes) is read successfully
+- [x] No permission issues
 
 ---
 
@@ -211,10 +211,10 @@ Create `NISession` per anchor, exchange config data over BLE, receive real-time 
 The Shareable Configuration Data must be sent to the anchor within ~2 seconds of the delegate callback, or the session times out. Minimize BLE write latency.
 
 ### Verification
-- [ ] Single anchor shows real-time distance (~10-30 Hz updates)
-- [ ] Direction vector received (may be nil depending on orientation)
-- [ ] 3 anchors range simultaneously with concurrent NISessions
-- [ ] Session recovers from timeout/reconnection
+- [x] Single anchor shows real-time distance (~10-30 Hz updates)
+- [x] Direction vector received (may be nil depending on orientation)
+- [x] 3 anchors range simultaneously with concurrent NISessions
+- [x] Session recovers from timeout/reconnection
 
 ---
 

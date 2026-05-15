@@ -86,14 +86,14 @@
 
 ## Phase 5: iOS App — NI Sessions & Ranging
 
-- [ ] `NearbyInteractionManager` implemented
-- [ ] `NINearbyAccessoryConfiguration` created from config data
-- [ ] Shareable config data sent to anchor via BLE GATT
-- [ ] Distance updates received via `session(_:didUpdate:)`
-- [ ] Session timeout/reconnection handled
-- [ ] `PositioningViewModel` wired up
-- [ ] Single anchor ranging works end-to-end
-- [ ] 3 anchors range simultaneously
+- [x] `NearbyInteractionManager` implemented
+- [x] `NINearbyAccessoryConfiguration` created from config data
+- [x] Shareable config data sent to anchor via BLE GATT
+- [x] Distance updates received via `session(_:didUpdate:)`
+- [x] Session timeout/reconnection handled
+- [x] `PositioningViewModel` wired up
+- [x] Single anchor ranging works end-to-end
+- [x] 3 anchors range simultaneously
 
 ## Phase 6: iOS App — Trilateration & UI
 
