@@ -31,6 +31,14 @@ struct ContentView: View {
                     .tabItem {
                         Label("Measure", systemImage: "chart.bar.doc.horizontal")
                     }
+
+                    NavigationStack {
+                        SettingsView(viewModel: viewModel)
+                            .navigationTitle("Settings")
+                    }
+                    .tabItem {
+                        Label("Settings", systemImage: "gearshape")
+                    }
                 }
             } else {
                 BluetoothWarningView(state: viewModel.bluetoothManager.bluetoothState)

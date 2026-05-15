@@ -5,7 +5,7 @@
 
 ---
 
-## Current Phase: Phase 7 — System Integration & Single-Anchor Validation
+## Current Phase: Phase 8 — Multi-Anchor Positioning & Calibration
 
 ## Overall Progress
 
