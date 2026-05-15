@@ -51,9 +51,9 @@ Get toolchain working, flash pre-built firmware, verify hardware with Qorvo's ow
 11. **Build from source**: open `.emProject` in SEGGER ES, configure SDK paths, build, flash, verify behavior matches pre-built
 
 ### Verification
-- [ ] All 3 boards flash and run pre-built NI firmware
-- [ ] Qorvo iOS app shows real-time distance to each board
-- [ ] Source-built firmware compiles and behaves identically
+- [x] All 3 boards flash and run pre-built NI firmware
+- [x] Qorvo iOS app shows real-time distance to each board
+- [x] Source-built firmware compiles and behaves identically
 
 ---
 

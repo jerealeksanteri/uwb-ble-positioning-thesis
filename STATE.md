@@ -26,21 +26,21 @@
 
 ## Phase 1: Dev Environment Setup & Smoke Test
 
-- [ ] SEGGER Embedded Studio installed
-- [ ] nRF5 SDK v17.1.0 downloaded and extracted
-- [ ] nRF Command Line Tools installed (`nrfjprog` available)
-- [ ] SEGGER J-Link Software installed
-- [ ] Qorvo DW3_QM33 SDK v1.1.1 downloaded
-- [ ] Qorvo Nearby Interaction package v3.0 downloaded
-- [ ] Pre-built NI firmware flashed to board 1
-- [ ] Pre-built NI firmware flashed to board 2
-- [ ] Pre-built NI firmware flashed to board 3
-- [ ] Qorvo NI iOS app installed on iPhone
-- [ ] Qorvo app shows distance to board 1
-- [ ] Qorvo app shows distance to board 2
-- [ ] Qorvo app shows distance to board 3
-- [ ] Source build compiles in SEGGER ES
-- [ ] Source-built firmware behaves identically to pre-built
+- [x] SEGGER Embedded Studio installed
+- [x] nRF5 SDK v17.1.0 downloaded and extracted
+- [x] nRF Command Line Tools installed (`nrfjprog` available)
+- [x] SEGGER J-Link Software installed
+- [x] Qorvo DW3_QM33 SDK v1.1.1 downloaded
+- [x] Qorvo Nearby Interaction package v3.0 downloaded
+- [x] Pre-built NI firmware flashed to board 1
+- [x] Pre-built NI firmware flashed to board 2
+- [x] Pre-built NI firmware flashed to board 3
+- [x] Qorvo NI iOS app installed on iPhone
+- [x] Qorvo app shows distance to board 1
+- [x] Qorvo app shows distance to board 2
+- [x] Qorvo app shows distance to board 3
+- [x] Source build compiles in SEGGER ES
+- [x] Source-built firmware behaves identically to pre-built
 
 ## Phase 2: Anchor Firmware — BLE & Identity
 
