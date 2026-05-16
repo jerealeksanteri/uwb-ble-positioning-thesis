@@ -322,8 +322,8 @@ Non-collinear triangle, same height (~1.2m), clear LOS to measurement area.
 
 ```
 Measurement reference points:
-- Anchor side: top edge of DWM3001 module (UWB antenna location)
-- iPhone side: top-center of phone back (consistent reference point)
+- Anchor side: top edge of DWM3001 module (UWB antenna location, middle of the antenna, antenna facing flat towards phone)
+- iPhone side: center of phone back (consistent reference point)
 
 The key requirement is CONSISTENCY — the calibration offset absorbs any
 constant bias between your reference points and the actual antenna phase centers.
