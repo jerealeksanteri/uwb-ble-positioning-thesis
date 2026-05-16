@@ -145,8 +145,8 @@
 
 ## Phase 10: Documentation & Thesis Writing
 
-- [ ] `README.md` updated with full project docs
-- [ ] `docs/` populated (architecture, placement, wiring)
+- [x] `README.md` updated with full project docs
+- [x] `docs/` populated (architecture, hardware setup, firmware guide, iOS app guide, calibration)
 - [ ] Thesis theory section drafted
 - [ ] Thesis system design section drafted
 - [ ] Thesis implementation section drafted
