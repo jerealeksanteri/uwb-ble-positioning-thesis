@@ -298,14 +298,16 @@ Non-collinear triangle, same height (~1.2m), clear LOS to measurement area.
 ### Steps
 
 1. **Deploy 3 anchors** — measure positions with tape measure (cm precision)
-2. **Update anchor positions** in iOS app settings / `Constants.swift`
+2. **Update anchor positions** in iOS app Settings tab (persisted via `AnchorConfigStore`)
 3. **Connect to all 3 and verify simultaneous ranging**
-4. **Antenna delay calibration**:
-   - Place iPhone at exactly 2.000m from each anchor individually
-   - Record 60s of measurements
-   - Calculate offset: `mean(measured) - 2.000`
-   - Adjust in firmware: `dwt_settxantennadelay()` / `dwt_setrxantennadelay()`
-   - Or apply offset in iOS app as distance correction
+4. **Distance calibration** (per-anchor offset):
+   - For each anchor individually, measure at multiple known distances (e.g., 0.5, 1, 2, 4, 5 m)
+   - Use the app's Measure tab (Distance mode) to record 60 samples per distance
+   - Export CSVs and place in `measurements/anchor-calibration/anchor1/`, `anchor2/`, `anchor3/`
+   - Run `python3 measurements/calibration.py` to compute per-anchor mean error and suggested offset
+   - Enter the suggested offset in the app's Settings → Distance Calibration Offsets
+   - The offset is **added** to measured distance (negative offset corrects positive bias)
+   - Verify calibrated distances are closer to true values
 5. **Test grid measurement** (12 points):
    ```
    (1,1) (2,1) (3,1) (4,1)
@@ -314,7 +316,31 @@ Non-collinear triangle, same height (~1.2m), clear LOS to measurement area.
    ```
    200 samples per point, record true (x,y) and computed (x,y)
 6. **Calculate positioning error** = sqrt((x_true - x_comp)^2 + (y_true - y_comp)^2)
-7. **Implement GDOP analysis** — how anchor geometry affects accuracy
+7. **Implement HDOP analysis** — how anchor geometry affects accuracy
+
+### Calibration procedure detail
+
+```
+Measurement reference points:
+- Anchor side: top edge of DWM3001 module (UWB antenna location)
+- iPhone side: top-center of phone back (consistent reference point)
+
+The key requirement is CONSISTENCY — the calibration offset absorbs any
+constant bias between your reference points and the actual antenna phase centers.
+
+File naming convention:
+  uwb_distance_A{id}_{dist}m_{date}_{time}.csv
+
+Example workflow:
+  $ python3 measurements/calibration.py
+
+  ANCHOR1
+  True (m)   Mean (m)   Error (m)   Error %   Std (m)   N
+  0.5        0.5057     +0.0057     +1.13     0.0177    60
+  1.0        1.0689     +0.0689     +6.89     0.0093    60
+  ...
+  Suggested offset: -0.0738 m  (enter this in Settings)
+```
 
 ### Verification
 - [x] All 3 anchors range simultaneously
