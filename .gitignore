@@ -4,6 +4,7 @@
 .LSOverride
 ._*
 CLAUDE.md
+/thesis
 
 # SEGGER Embedded Studio
 firmware/**/*.jlink

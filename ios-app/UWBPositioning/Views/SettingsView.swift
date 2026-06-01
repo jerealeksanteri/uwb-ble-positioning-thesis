@@ -143,8 +143,8 @@ private struct AnchorPositionRow: View {
                     .keyboardType(.decimalPad)
                     .textFieldStyle(.roundedBorder)
                     .focused(focusedField, equals: "x-\(config.anchorId)" as AnyHashable)
-                    .onChange(of: focusedField.wrappedValue) { _, newFocus in
-                        if newFocus as? String != "x-\(config.anchorId)" {
+                    .onChange(of: focusedField.wrappedValue) { oldFocus, newFocus in
+                        if oldFocus as? String == "x-\(config.anchorId)" && newFocus as? String != "x-\(config.anchorId)" {
                             commitX()
                         }
                     }
@@ -155,8 +155,8 @@ private struct AnchorPositionRow: View {
                     .keyboardType(.decimalPad)
                     .textFieldStyle(.roundedBorder)
                     .focused(focusedField, equals: "y-\(config.anchorId)" as AnyHashable)
-                    .onChange(of: focusedField.wrappedValue) { _, newFocus in
-                        if newFocus as? String != "y-\(config.anchorId)" {
+                    .onChange(of: focusedField.wrappedValue) { oldFocus, newFocus in
+                        if oldFocus as? String == "y-\(config.anchorId)" && newFocus as? String != "y-\(config.anchorId)" {
                             commitY()
                         }
                     }
@@ -214,8 +214,8 @@ private struct NumericField: View {
             .keyboardType(.numbersAndPunctuation)
             .textFieldStyle(.roundedBorder)
             .focused(focusedField, equals: focusId as AnyHashable)
-            .onChange(of: focusedField.wrappedValue) { _, newFocus in
-                if newFocus as? String != focusId {
+            .onChange(of: focusedField.wrappedValue) { oldFocus, newFocus in
+                if oldFocus as? String == focusId && newFocus as? String != focusId {
                     commit()
                 }
             }
