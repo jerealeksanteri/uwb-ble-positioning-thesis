@@ -2,6 +2,8 @@
 
 Bachelor's thesis project: a 2D indoor positioning system using 3x Qorvo DWM3001CDK development boards (nRF52833 + DW3110 UWB) as anchors and an iPhone 16 Pro Max as the mobile tag. The iPhone's U2 chip ranges directly with the DW3110 via Apple's Nearby Interaction framework; BLE serves only as the control/configuration channel.
 
+This is a project fully designed and implemented by Jere Niemi as part of a Bachelors thesis. All rights reserved.
+
 ## Architecture
 
 ```
